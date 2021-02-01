@@ -1,10 +1,12 @@
 # <center> Nurse Scheduling Problem </center>
 
+
+
 A large hospital has to cover a set of day-care activities with the available nurses.Each nurse can perform different subsets of the activities, which are implicitly definedby time and skill constraints.  In particular, for each activity the starting time andthe ending time are given, so it is known whether or not it is possible for the samenurse to perform both in sequence (it is assumed that it takes a short enough timeto move across the hospital so that this can be ignored).  Furthermore, nurses can beof three skill levels (beginner, intermediate, advanced), and each activity is markedwith the required skill level:  only nurses with the required skill, or one above, canperform it.  Union regulations dictate the maximum working time (sum of the timeshe’s performing activities) for each nurse; furthermore, nurses can’t be left waitingfor more that a given period (say, two hours) between subsequent activities.  Giventhe available number of nurses with each skill level, the problem is to assign a feasibleset of duties to the smallest possible number of nurses in order to have each activityperformed by exactly one of them.  Among solutions with the same number of nurses,these where less nurses perform activities requiring a skill level below their own arepreferred; the more the skill level is below, the more this should be avoided (but notat the cost of using more than the minimum number of nurses).
 
 <img src="clock.jpg" width=800/>
 
-**Note:** You can download the repository containing this and other examples by clicking [here](https://github.com/alberts96/A-nurse-scheduling-problem-solved-with-Gurobi/master.zip). In order to run this Jupyter Notebook properly, you must have a Gurobi license. If you do not have one, you can request an [evaluation license](https://www.gurobi.com/downloads/request-an-evaluation-license/?utm_source=Github&utm_medium=website_JupyterME&utm_campaign=CommercialDataScience) as a *commercial user*, or download a [free license](https://www.gurobi.com/academia/academic-program-and-licenses/?utm_source=Github&utm_medium=website_JupyterME&utm_campaign=AcademicDataScience) as an *academic user*.
+**Note:** You can download the repository containing this and other examples by clicking <a href="https://github.com/alberts96/A-nurse-scheduling-problem-solved-with-Gurobi/archive/master.zip" download>here </a> In order to run this Jupyter Notebook properly, you must have a Gurobi license. If you do not have one, you can request an [evaluation license](https://www.gurobi.com/downloads/request-an-evaluation-license/?utm_source=Github&utm_medium=website_JupyterME&utm_campaign=CommercialDataScience) as a *commercial user*, or download a [free license](https://www.gurobi.com/academia/academic-program-and-licenses/?utm_source=Github&utm_medium=website_JupyterME&utm_campaign=AcademicDataScience) as an *academic user*.
 
 
 ```python
@@ -49,21 +51,9 @@ Input data are defined over the following sets:
 * <b>K</b> is the set of the nurses, two values are assigned to each nurse: level and maximum work time;
 * <b>A</b>is the set of the activities, each activity has three values: level, start time, end time;  
 * <b>I</b> is the super-set of <b>A</b>  united with the auxiliary activities 0 that has the function of source;
-* $W$ is the maximum waiting time between two activities done by the same nurse.
+* <b>W</b> is the maximum waiting time between two activities done by the same nurse.
 
-\begin{equation*}
-    \begin{array}{lr}
-    \boldsymbol{K}\hspace{0.1cm} set\hspace{0.1cm} of\hspace{0.1cm} nurses, & |\boldsymbol{K}| =: K  \\
-    \hspace{0.3cm} l_k \hspace{0.1cm}level\hspace{0.1cm} of\hspace{0.1cm} nurse\hspace{0.1cm} k:  & l_k \in \{ 1,2,3 \},\hspace{0.1cm} \forall k \in \boldsymbol{K} \\
-    \hspace{0.3cm}q_k \hspace{0.1cm} maximum\hspace{0.1cm} work\hspace{0.1cm}time\hspace{0.1cm} for\hspace{0.1cm} nurse\hspace{0.1cm} k: & q_k \in \mathbb{N},\hspace{0.1cm} \forall k \in \boldsymbol{K}\\
-    \boldsymbol{A}\hspace{0.1cm}set \hspace{0.1cm} of \hspace{0.1cm} activities, & |\boldsymbol{A}| =: A\\
-    \hspace{0.3cm} h_i \hspace{0.1cm}level\hspace{0.1cm} of\hspace{0.1cm} activity\hspace{0.1cm} i:  & h_i \in \{ 1,2,3 \},\hspace{0.1cm} \forall i \in \boldsymbol{A} \\
-    \hspace{0.3cm} s_i \hspace{0.1cm} start \hspace{0.1cm}time\hspace{0.1cm} for\hspace{0.1cm} activity\hspace{0.1cm} i: & s_i \in [0,24],\hspace{0.1cm} \forall i \in \boldsymbol{A}\\
-    \hspace{0.3cm} t_i \hspace{0.1cm} end \hspace{0.1cm}time\hspace{0.1cm} for\hspace{0.1cm} activity\hspace{0.1cm} i: & t_i\in [0,24],\hspace{0.1cm} \forall i \in \boldsymbol{A}\\
-    \boldsymbol{I} := \boldsymbol{A} \cup \{0\}, activities, source\&thin \\
-    W \hspace{0.11cm} maximum \hspace{0.1cm} waiting\hspace{0.1cm} time \hspace{0.1cm} (parameter), & W \in \mathbb{N}
-    \end{array}
-\end{equation*}
+
 
 
 ```python
@@ -106,15 +96,9 @@ h.insert(0,0)
 ### Support Sets
 
 #### Backward star \& forward star
-For each activity we defined his Backward Star and Forward Star, constraining the duration of the waiting time between two activity to be less than $W$.
+For each activity we defined his Backward Star and Forward Star, constraining the duration of the waiting time between two activity to be less than W.
 
-\begin{equation*}
-    \begin{array}{lc}
-    BS(i) := \{j \in \boldsymbol{A} \hspace{0.05cm} |\hspace{0.05cm} s_i - e_j \in [0,W]\} \cup \{0\} \subseteq \boldsymbol{I},   &  \forall i \in \boldsymbol{A} \\
-    FS(i) := \{j \in \boldsymbol{A}\hspace{0.05cm} |\hspace{0.05cm} s_j - t_i \in [0,W]\} \cup \{0\} \subseteq \boldsymbol{I},  &  \forall i \in \boldsymbol{A} \\
-    BS(0) \equiv FS(0) \equiv \boldsymbol{A} \\
-    \end{array}
-\end{equation*}
+
 
 
 
@@ -149,16 +133,7 @@ forward.append([])  #empty forward for the thin
 #### Level compatible
 We defined support sets for activities and nurses. For each nurse a subset of activities that can be assigned to the nurse and vice-versa.
 
-\begin{equation*}
-    \begin{array}{lc}
-    KL(i) := \{k \in \boldsymbol{K} \hspace{0.05cm} |\hspace{0.05cm} l_k >= h_i \} \forall i \in \boldsymbol{A}
-    \end{array}
-\end{equation*}
-\begin{equation*}
-    \begin{array}{lc}
-    AL(i) := \{i \in \boldsymbol{A} \hspace{0.05cm} |\hspace{0.05cm} l_k >= h_i \} \forall k \in \boldsymbol{K}
-    \end{array}
-\end{equation*}
+
 
 
 ```python
@@ -187,15 +162,6 @@ AL = levelok.copy()
 ### Decision Variables
 We defined the binary variable:
 $x_{ij}^{k}$ that represent the transition of a nurse from a terminated activity to the next one (both assigned to a same nurse).
-\begin{equation*}
-\begin{array}{l}
-x_{ij}^k = 
-    \begin{cases}
-    1 ,\hspace{0.07cm} if \hspace{0.07cm} i \hspace{0.07cm} and \hspace{0.07cm} j \hspace{0.07cm} are \hspace{0.07cm} assigned \hspace{0.07cm} to \hspace{0.09cm} the \hspace{0.07cm} same \hspace{0.07cm}nurse \hspace{0.07cm} n\\
-    0 ,\hspace{0.07cm} otherwise
-    \end{cases} \\ \\ \forall i\in \boldsymbol{I}, \forall j \in FS(i), \forall k \in KL(i)\cap KL(j) \boldsymbol{K}
-    \end{array}
-\end{equation*}
 
 
 
@@ -218,15 +184,6 @@ df = pd.DataFrame(variables, columns = ['I', 'J', 'K'])
 ###  Objectives
 * The main objective minimize the number of nurses working during the day by minimizing the sum of nurses leaving the node 0 (`Source').
 * The secondary minimize the total difference between the level of the nurse and the tasks in which are involved.
-
-\begin{equation*}
-    \begin{array}{lc}
-Primary: &  min \sum\limits_{i \in A } \hspace{0.07cm}\sum\limits_{k \in KL(i) }  x_{0i}^k   \\
-\\
-Secondary: & min \sum\limits_{i \in A} \hspace{0.07cm}\sum\limits_{j \in BS(i)} \hspace{0.07cm} \sum\limits_{k \in KL(i)\cap KL(j)} x_{ji}^k \hspace{0.07cm} (l_k - h_i)
-    \end{array}
-\end{equation*}
-
 
 Since the objectives <b> hierarchical</b>, we can solve the primary, set it as a constraint and then solve the second. Having a solution for the first problem, allow the solver to concentrate more in is solving the secondary one that is the hardest one.
 However Gurobi offers a hierachical objective instantiation.
@@ -262,21 +219,6 @@ We defined 4 constraints:
 2. Each activity is carried out by exactly one nurse;
 2. Each working nurse can exit from the source node exactly one time;
 4. If a nurse is not assigned to any activity it remains in the source, instead if the nurse is assigned to some activities, this constraint assures us that the nurse will exits from the source and will return to the source.
-
-\begin{equation*}
-    \begin{array}{llll}\\
- 1) &  \sum\limits_{j\in FS(i)}\hspace{0.07cm} \sum\limits_{k \in KL(i)\cap KL(j)}  x_{ij}^k = 1,  & \forall i \in \boldsymbol{A}  &  
-\\ &  \sum\limits_{j\in BS(i)}\hspace{0.07cm} \sum\limits_{n \in KL(i)\cap KL(j)}  x_{ij}^k = 1,  & \forall i \in \boldsymbol{A}  &
-\\ \\
- 2) &   \sum\limits_{\substack{i \in AL(k)}} \hspace{0.07cm} \sum\limits_{j \in BS(i)\cap AL(k) } 
-x_{ji}^k (t_i - s_i) \leq m_k, &  & \forall k \in \boldsymbol{K} 
-\\ \\
-3) &  \sum\limits_{j \in FS(i)\cap AL(k)} x_{ij}^k = \sum\limits_{j \in BS(i)\cap AL(k)} x_{ji}^k,  & \forall i \in \boldsymbol{A}, & \forall k \in \boldsymbol{KL( i )} 
-\\ \\
-4) & \sum\limits_{i \in AL(k)} x_{0i}^k =  \sum\limits_{i \in AL(k)} x_{i0}^k. &  & \forall k \in \boldsymbol{K}
-\\ &   \sum\limits_{i \in AL(k)} x_{0i}^k \leq 1,  &  & \forall k \in \boldsymbol{K}
-\end{array}
-\end{equation*}
 
 
 ```python
@@ -332,7 +274,7 @@ m.optimize()
     ---------------------------------------------------------------------------
     
     Presolve removed 213 rows and 203 columns
-    Presolve time: 0.06s
+    Presolve time: 0.09s
     Presolved: 556 rows and 1814 columns
     ---------------------------------------------------------------------------
     
@@ -340,11 +282,11 @@ m.optimize()
     ---------------------------------------------------------------------------
     
     Presolve removed 87 rows and 109 columns
-    Presolve time: 0.10s
+    Presolve time: 0.14s
     Presolved: 469 rows, 1705 columns, 7589 nonzeros
     Variable types: 0 continuous, 1705 integer (1705 binary)
     
-    Root relaxation: objective 1.122222e+01, 695 iterations, 0.08 seconds
+    Root relaxation: objective 1.122222e+01, 695 iterations, 0.10 seconds
     
         Nodes    |    Current Node    |     Objective Bounds      |     Work
      Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
@@ -353,10 +295,10 @@ m.optimize()
     H    0     0                      23.0000000   11.22222  51.2%     -    0s
     H    0     0                      22.0000000   11.22222  49.0%     -    0s
     H    0     0                      21.0000000   11.22222  46.6%     -    0s
-    H    0     0                      19.0000000   11.22222  40.9%     -    0s
-         0     0   11.84638    0  154   19.00000   11.84638  37.7%     -    0s
-    H    0     0                      17.0000000   11.84638  30.3%     -    0s
-         0     0   12.22772    0  153   17.00000   12.22772  28.1%     -    0s
+    H    0     0                      19.0000000   11.22222  40.9%     -    1s
+         0     0   11.84638    0  154   19.00000   11.84638  37.7%     -    1s
+    H    0     0                      17.0000000   11.84638  30.3%     -    1s
+         0     0   12.22772    0  153   17.00000   12.22772  28.1%     -    1s
          0     0   12.61755    0  164   17.00000   12.61755  25.8%     -    1s
          0     0   12.61755    0  160   17.00000   12.61755  25.8%     -    1s
          0     0   12.93296    0  150   17.00000   12.93296  23.9%     -    1s
@@ -364,15 +306,16 @@ m.optimize()
          0     0   12.93296    0  145   16.00000   12.93296  19.2%     -    1s
          0     0   12.96858    0  176   16.00000   12.96858  18.9%     -    1s
          0     0   12.96858    0  172   16.00000   12.96858  18.9%     -    1s
-         0     0   12.97633    0  188   16.00000   12.97633  18.9%     -    1s
-         0     0   12.97633    0  149   16.00000   12.97633  18.9%     -    1s
-    H    0     0                      15.0000000   12.97718  13.5%     -    1s
-         0     2   12.97718    0  148   15.00000   12.97718  13.5%     -    1s
-      1095   706   13.63333   34  149   15.00000   13.14659  12.4%  25.8    5s
-      1114   719   14.00000   13  197   15.00000   13.17988  12.1%  25.4   10s
-      1137   734   14.00000   37  197   15.00000   13.37508  10.8%  24.8   15s
-      1195   754     cutoff   22        15.00000   13.45266  10.3%  44.4   20s
-    * 1373   712              33      14.0000000   13.49880  3.58%  56.2   23s
+         0     0   12.97633    0  188   16.00000   12.97633  18.9%     -    2s
+         0     0   12.97633    0  149   16.00000   12.97633  18.9%     -    2s
+    H    0     0                      15.0000000   12.97718  13.5%     -    2s
+         0     2   12.97718    0  148   15.00000   12.97718  13.5%     -    2s
+       832   552   13.67063   20   86   15.00000   13.10278  12.6%  27.6    5s
+      1109   715   13.62500   38  155   15.00000   13.14659  12.4%  25.5   10s
+      1126   727   13.47561   10  196   15.00000   13.33031  11.1%  25.1   15s
+      1142   740   13.43859   15  195   15.00000   13.37708  10.8%  35.7   20s
+      1275   745   13.92919   23  170   15.00000   13.45944  10.3%  50.7   25s
+    * 1373   712              33      14.0000000   13.49880  3.58%  56.2   26s
     
     Cutting planes:
       Gomory: 32
@@ -386,7 +329,7 @@ m.optimize()
       Zero half: 52
       RLT: 10
     
-    Explored 1387 nodes (81413 simplex iterations) in 23.59 seconds
+    Explored 1387 nodes (81413 simplex iterations) in 26.72 seconds
     Thread count was 4 (of 4 available processors)
     
     Solution count 8: 14 15 16 ... 23
@@ -402,37 +345,38 @@ m.optimize()
     Loaded user MIP start with objective 10
     
     Presolve removed 73 rows and 97 columns
-    Presolve time: 0.16s
+    Presolve time: 0.17s
     Presolved: 484 rows, 1717 columns, 8110 nonzeros
     Variable types: 0 continuous, 1717 integer (1717 binary)
     
     Root simplex log...
     
     Iteration    Objective       Primal Inf.    Dual Inf.      Time
-           0    0.0000000e+00   6.200000e+01   0.000000e+00     24s
-         524    5.0000000e+00   0.000000e+00   0.000000e+00     24s
+           0    0.0000000e+00   6.200000e+01   0.000000e+00     27s
+         524    5.0000000e+00   0.000000e+00   0.000000e+00     27s
     
-    Root relaxation: objective 5.000000e+00, 524 iterations, 0.04 seconds
+    Root relaxation: objective 5.000000e+00, 524 iterations, 0.05 seconds
     
         Nodes    |    Current Node    |     Objective Bounds      |     Work
      Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
     
-         0     0    5.00000    0   30   10.00000    5.00000  50.0%     -   23s
-    H    0     0                       9.0000000    5.00000  44.4%     -   24s
-    H    0     0                       8.0000000    5.00000  37.5%     -   24s
-         0     0    5.00000    0   73    8.00000    5.00000  37.5%     -   24s
-         0     0    5.42500    0   70    8.00000    5.42500  32.2%     -   24s
-         0     0    5.62500    0   64    8.00000    5.62500  29.7%     -   24s
-         0     0    5.62500    0   24    8.00000    5.62500  29.7%     -   24s
-         0     0    5.62500    0  103    8.00000    5.62500  29.7%     -   24s
-         0     0    5.62500    0   95    8.00000    5.62500  29.7%     -   25s
-         0     0    5.64410    0  103    8.00000    5.64410  29.4%     -   25s
-         0     0    5.64410    0  108    8.00000    5.64410  29.4%     -   25s
-         0     0    5.69565    0   99    8.00000    5.69565  28.8%     -   25s
-         0     0    5.69565    0  114    8.00000    5.69565  28.8%     -   25s
-         0     0    5.69565    0  118    8.00000    5.69565  28.8%     -   25s
-         0     0    5.69565    0   82    8.00000    5.69565  28.8%     -   25s
-         0     2    5.71429    0   82    8.00000    5.71429  28.6%     -   25s
+         0     0    5.00000    0   30   10.00000    5.00000  50.0%     -   27s
+    H    0     0                       9.0000000    5.00000  44.4%     -   27s
+    H    0     0                       8.0000000    5.00000  37.5%     -   27s
+         0     0    5.00000    0   73    8.00000    5.00000  37.5%     -   27s
+         0     0    5.42500    0   70    8.00000    5.42500  32.2%     -   27s
+         0     0    5.62500    0   64    8.00000    5.62500  29.7%     -   27s
+         0     0    5.62500    0   24    8.00000    5.62500  29.7%     -   28s
+         0     0    5.62500    0  103    8.00000    5.62500  29.7%     -   28s
+         0     0    5.62500    0   95    8.00000    5.62500  29.7%     -   28s
+         0     0    5.64410    0  103    8.00000    5.64410  29.4%     -   28s
+         0     0    5.64410    0  108    8.00000    5.64410  29.4%     -   28s
+         0     0    5.69565    0   99    8.00000    5.69565  28.8%     -   28s
+         0     0    5.69565    0  114    8.00000    5.69565  28.8%     -   28s
+         0     0    5.69565    0  118    8.00000    5.69565  28.8%     -   28s
+         0     0    5.69565    0   82    8.00000    5.69565  28.8%     -   28s
+         0     2    5.71429    0   82    8.00000    5.71429  28.6%     -   28s
+       645   170     cutoff   35         8.00000    6.38458  20.2%  28.1   30s
     
     Cutting planes:
       Gomory: 5
@@ -445,7 +389,7 @@ m.optimize()
       Zero half: 15
       RLT: 3
     
-    Explored 1193 nodes (36402 simplex iterations) in 27.14 seconds
+    Explored 1193 nodes (36402 simplex iterations) in 30.68 seconds
     Thread count was 4 (of 4 available processors)
     
     Solution count 3: 8 9 10 
@@ -454,6 +398,15 @@ m.optimize()
     Best objective 8.000000000000e+00, best bound 8.000000000000e+00, gap 0.0000%
     
     ---------------------------------------------------------------------------
-    Multi-objectives: solved in 27.17 seconds, solution count 10
+    Multi-objectives: solved in 30.72 seconds, solution count 10
     
     
+
+## Visualize the solution 
+
+<img src="gantt.png" width=800/>
+
+
+```python
+
+```
