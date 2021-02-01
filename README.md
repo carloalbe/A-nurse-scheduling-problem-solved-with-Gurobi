@@ -6,6 +6,8 @@ A large hospital has to cover a set of day-care activities with the available nu
 
 <img src="clock.jpg" width=800/>
 
+**Note:** You can download the repository containing this and other examples by clicking [here](https://github.com/alberts96/A-nurse-scheduling-problem-solved-with-Gurobi/master.zip). In order to run this Jupyter Notebook properly, you must have a Gurobi license. If you do not have one, you can request an [evaluation license](https://www.gurobi.com/downloads/request-an-evaluation-license/?utm_source=Github&utm_medium=website_JupyterME&utm_campaign=CommercialDataScience) as a *commercial user*, or download a [free license](https://www.gurobi.com/academia/academic-program-and-licenses/?utm_source=Github&utm_medium=website_JupyterME&utm_campaign=AcademicDataScience) as an *academic user*.
+
 
 ```python
 # This command imports the Gurobi functions and classes.
@@ -340,11 +342,11 @@ m.optimize()
     ---------------------------------------------------------------------------
     
     Presolve removed 87 rows and 109 columns
-    Presolve time: 0.12s
+    Presolve time: 0.10s
     Presolved: 469 rows, 1705 columns, 7589 nonzeros
     Variable types: 0 continuous, 1705 integer (1705 binary)
     
-    Root relaxation: objective 1.122222e+01, 695 iterations, 0.07 seconds
+    Root relaxation: objective 1.122222e+01, 695 iterations, 0.08 seconds
     
         Nodes    |    Current Node    |     Objective Bounds      |     Work
      Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
@@ -371,8 +373,8 @@ m.optimize()
       1095   706   13.63333   34  149   15.00000   13.14659  12.4%  25.8    5s
       1114   719   14.00000   13  197   15.00000   13.17988  12.1%  25.4   10s
       1137   734   14.00000   37  197   15.00000   13.37508  10.8%  24.8   15s
-      1241   744     cutoff   29        15.00000   13.45944  10.3%  46.8   20s
-    * 1373   712              33      14.0000000   13.49880  3.58%  56.2   22s
+      1195   754     cutoff   22        15.00000   13.45266  10.3%  44.4   20s
+    * 1373   712              33      14.0000000   13.49880  3.58%  56.2   23s
     
     Cutting planes:
       Gomory: 32
@@ -386,7 +388,7 @@ m.optimize()
       Zero half: 52
       RLT: 10
     
-    Explored 1387 nodes (81413 simplex iterations) in 22.73 seconds
+    Explored 1387 nodes (81413 simplex iterations) in 23.59 seconds
     Thread count was 4 (of 4 available processors)
     
     Solution count 8: 14 15 16 ... 23
@@ -402,38 +404,37 @@ m.optimize()
     Loaded user MIP start with objective 10
     
     Presolve removed 73 rows and 97 columns
-    Presolve time: 0.19s
+    Presolve time: 0.16s
     Presolved: 484 rows, 1717 columns, 8110 nonzeros
     Variable types: 0 continuous, 1717 integer (1717 binary)
     
     Root simplex log...
     
     Iteration    Objective       Primal Inf.    Dual Inf.      Time
-           0    0.0000000e+00   6.200000e+01   0.000000e+00     23s
-         524    5.0000000e+00   0.000000e+00   0.000000e+00     23s
+           0    0.0000000e+00   6.200000e+01   0.000000e+00     24s
+         524    5.0000000e+00   0.000000e+00   0.000000e+00     24s
     
-    Root relaxation: objective 5.000000e+00, 524 iterations, 0.06 seconds
+    Root relaxation: objective 5.000000e+00, 524 iterations, 0.04 seconds
     
         Nodes    |    Current Node    |     Objective Bounds      |     Work
      Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
     
          0     0    5.00000    0   30   10.00000    5.00000  50.0%     -   23s
-    H    0     0                       9.0000000    5.00000  44.4%     -   23s
-    H    0     0                       8.0000000    5.00000  37.5%     -   23s
-         0     0    5.00000    0   73    8.00000    5.00000  37.5%     -   23s
-         0     0    5.42500    0   70    8.00000    5.42500  32.2%     -   23s
-         0     0    5.62500    0   64    8.00000    5.62500  29.7%     -   23s
+    H    0     0                       9.0000000    5.00000  44.4%     -   24s
+    H    0     0                       8.0000000    5.00000  37.5%     -   24s
+         0     0    5.00000    0   73    8.00000    5.00000  37.5%     -   24s
+         0     0    5.42500    0   70    8.00000    5.42500  32.2%     -   24s
+         0     0    5.62500    0   64    8.00000    5.62500  29.7%     -   24s
          0     0    5.62500    0   24    8.00000    5.62500  29.7%     -   24s
          0     0    5.62500    0  103    8.00000    5.62500  29.7%     -   24s
-         0     0    5.62500    0   95    8.00000    5.62500  29.7%     -   24s
-         0     0    5.64410    0  103    8.00000    5.64410  29.4%     -   24s
-         0     0    5.64410    0  108    8.00000    5.64410  29.4%     -   24s
-         0     0    5.69565    0   99    8.00000    5.69565  28.8%     -   24s
-         0     0    5.69565    0  114    8.00000    5.69565  28.8%     -   24s
-         0     0    5.69565    0  118    8.00000    5.69565  28.8%     -   24s
-         0     0    5.69565    0   82    8.00000    5.69565  28.8%     -   24s
-         0     2    5.71429    0   82    8.00000    5.71429  28.6%     -   24s
-        19    18 infeasible    4         8.00000    6.03571  24.6%  96.2   25s
+         0     0    5.62500    0   95    8.00000    5.62500  29.7%     -   25s
+         0     0    5.64410    0  103    8.00000    5.64410  29.4%     -   25s
+         0     0    5.64410    0  108    8.00000    5.64410  29.4%     -   25s
+         0     0    5.69565    0   99    8.00000    5.69565  28.8%     -   25s
+         0     0    5.69565    0  114    8.00000    5.69565  28.8%     -   25s
+         0     0    5.69565    0  118    8.00000    5.69565  28.8%     -   25s
+         0     0    5.69565    0   82    8.00000    5.69565  28.8%     -   25s
+         0     2    5.71429    0   82    8.00000    5.71429  28.6%     -   25s
     
     Cutting planes:
       Gomory: 5
@@ -446,7 +447,7 @@ m.optimize()
       Zero half: 15
       RLT: 3
     
-    Explored 1193 nodes (36402 simplex iterations) in 26.50 seconds
+    Explored 1193 nodes (36402 simplex iterations) in 27.14 seconds
     Thread count was 4 (of 4 available processors)
     
     Solution count 3: 8 9 10 
@@ -455,101 +456,6 @@ m.optimize()
     Best objective 8.000000000000e+00, best bound 8.000000000000e+00, gap 0.0000%
     
     ---------------------------------------------------------------------------
-    Multi-objectives: solved in 26.52 seconds, solution count 10
+    Multi-objectives: solved in 27.17 seconds, solution count 10
     
     
-
-## Visualize the solution 
-
-
-```python
-def getRoutes(X):
-    x = []
-    keys = []
-    for (i,j,k) in X:
-        if X[(i,j,k)].x==1: 
-            x.append((i,j,k))
-            if k not in keys:
-                keys.append(k)
-
-    routes= {}
-    for key in keys: 
-        n=0
-        routes[key]=[]
-        while 0 not in routes[key]:
-            for (i,j,k) in x:
-                if k==key and i==n :
-                    
-                    routes[key].append(j)
-                    n=j
-                    
-    return(routes)
-
-routes = getRoutes(X)
-```
-
-
-```python
-import plotly.figure_factory as ff
-from datetime import date
-from IPython.display import Image
-
-
-today = date.today().strftime("%Y-%m-%d")
-gantt=[]
-
-required_level=[] #mapping the values of the level to beginner intermediate advanced
-for i in h:
-    if i == 1: required_level.append("Beginner")
-    elif i == 2: required_level.append("Intermediate")
-    elif i == 3: required_level.append("Advanced")
-    else: required_level.append("None")
-        
-nurse_level=[]
-for i in l:
-    if i == 1: nurse_level.append("Beginner")
-    elif i == 2: nurse_level.append("Intermediate")
-    elif i == 3: nurse_level.append("Advanced")
-    else: nurse_level.append("None")
-
-        
-        
-start = []
-end = []
-for i in I:
-    if i == 0: 
-        start.append("None")
-        end.append("None")
-    else:
-        start.append(str(s[i])+":00:00")
-        end.append(str(t[i])+":00:00")
-    if end[i]=="24:00:00": end[i]="23:59:59"    
-        
-    
-task_names = []        
-for i in routes:
-    for j in routes[i][:-1]:
-        task_names.append(str(j))
-        gantt.append(dict(Task="Nurse n° "+str(i)+"("+nurse_level[i]+")", Start=str(today)+' '+start[j], Finish=str(today)+' '+end[j],Required_Level=required_level[j], task_names = str(j)))
-
-colors = dict(Advanced = 'rgb(114, 44, 121)', Intermediate = 'rgb(198, 47, 105)',Beginner = 'rgb(46, 137, 205)')
-
-fig = ff.create_gantt(gantt, colors=colors, index_col='Required_Level', title='Daily Schedule',
-                      show_colorbar=True, height=500, showgrid_x=True, showgrid_y=True,group_tasks=True,task_names = task_names)
-
-
-img_bytes = fig.to_image(format="png")
-Image(img_bytes)
-```
-
-
-
-
-![png](gantt.png)
-
-
-
-
-```python
-
-```
