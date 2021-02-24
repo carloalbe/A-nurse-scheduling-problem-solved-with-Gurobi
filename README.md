@@ -404,7 +404,7 @@ m.optimize()
 
 ## Visualize the solution 
 
-<img src="gantt.jpg" width=800/>
+<img src="gantt.png" width=800/>
 
 
 ```python
