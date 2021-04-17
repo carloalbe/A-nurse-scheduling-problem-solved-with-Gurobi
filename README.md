@@ -406,7 +406,3 @@ m.optimize()
 
 <img src="gantt.png" width=800/>
 
-
-```python
-
-```
