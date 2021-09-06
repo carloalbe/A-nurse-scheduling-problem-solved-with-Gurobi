@@ -41,8 +41,6 @@ activities = pd.read_csv("activities.csv")
 nurses = pd.read_csv("nurses.csv")
 ```
 
-    Using license file C:\Users\carlo\gurobi.lic
-    Academic license - for non-commercial use only
     
 
 ## Data definition
